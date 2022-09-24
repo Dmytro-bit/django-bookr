@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404 , redirect
 from .models import Book , Review, Contributor , Publisher
 from .utils import average_rating
-from .forms import SearchForm , PublisherForm, ReviewForm
+from .forms import SearchForm , PublisherForm, ReviewForm, BookMediaForm
 from django.contrib import messages
 from django.utils import timezone
-
+import PIL.Image
+from io import BytesIO
+from django.core.files.images import ImageFile
 
 def book_list(request):
     books = Book.objects.all()
@@ -81,26 +83,55 @@ def publisher_edit(request, pk = None):
 def review_edit(request, book_pk, review_pk=None):
     book = get_object_or_404(Book, pk=book_pk)
     review = None
+
     if review_pk is not None:
         review = get_object_or_404(Review, book_id=book_pk, pk=review_pk )
 
     if request.method == "POST":
         form = ReviewForm(request.POST, instance=review)
+
         if form.is_valid():
             update_review = form.save(commit=False)
             update_review.book = book
+
             if review is None:
                 update_review.date_edited = timezone.now()
             update_review.save()
+
             if review is None:
                 messages.success(request, f'Review for "{book.title}" was created')
+
             else:
                 messages.success(request, f'Review for "{book.title}" was updated')
+
             return redirect("review_edit", book_pk, update_review.pk )
+
     else:
         form = ReviewForm(instance=review)
+
     return render(request, "reviews/instance-form.html", {"instance": review, "form": form, "model_type": "Review",
                                                  "related_model_type": "Book",
                                                  "related_instance":book})
 
+def book_media(request, book_pk):
+    book = get_object_or_404(Book, pk = book_pk)
 
+    if request.method == 'POST':
+        form = BookMediaForm(request.POST, request.FILES, instance=book)
+
+        if form.is_valid():
+            book = form.save(False)
+            cover = form.cleaned_data["cover"]
+
+            if cover:
+                image = PIL.Image.open(cover)
+                image.thumbnail((300, 300))
+                image_data = BytesIO()
+                image.save(fp=image_data, format=cover.image.format)
+                image_file = ImageFile(image_data)
+                book.cover.save(cover.name, image_file)
+                messages.success(request,f"Book {book} was successfully updated.")
+                return redirect("book_details", book.pk)
+    else:
+        form =BookMediaForm()
+    return render(request, "reviews/instance-form.html", {"form":form, "instance":book, "model_type": Book, "is_file_upload":True })
