@@ -11,9 +11,11 @@ class Publisher(models.Model):
 class Book(models.Model):
     title = models.CharField(max_length=70, help_text="Title of the book")
     publication_date = models.DateField(verbose_name="Date the book was published")
-    isbn = models.CharField(max_length=20, verbose_name="ISBN namber of the book")
+    isbn = models.CharField(max_length=20, verbose_name="ISBN number of the book")
     publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
-    contributors = models.ManyToManyField("Contributor", through="BookContributor")
+    contributors = models.ManyToManyField("Contributor", through="Book Contributor")
+    cover = models.ImageField(upload_to="book_covers/", blank=True, help_text="Books covers")
+    sample = models.FileField(upload_to="book_samples/", null=True, help_text="Books samples")
 
     def __str__(self):
         return self.title
@@ -47,8 +49,8 @@ class BookContributor(models.Model):
 class Review(models.Model):
     content = models.TextField(help_text="The review text")
     rating = models.IntegerField(help_text="The rating the reviewer has given")
-    date_created = models.DateTimeField(auto_now_add=True, help_text="The date and time the review wos created")
-    date_edited = models.DateTimeField(null=True, help_text="The date and time the review wos last edited")
+    date_created = models.DateTimeField(auto_now_add=True, help_text="The date and time the review was created")
+    date_edited = models.DateTimeField(null=True, help_text="The date and time the review was last edited")
     creator = models.ForeignKey(auth.get_user_model(), on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE, help_text="The book that this review is for")
 
