@@ -13,9 +13,9 @@ class Book(models.Model):
     publication_date = models.DateField(verbose_name="Date the book was published")
     isbn = models.CharField(max_length=20, verbose_name="ISBN number of the book")
     publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
-    contributors = models.ManyToManyField("Contributor", through="Book Contributor")
-    cover = models.ImageField(upload_to="book_covers/", blank=True, help_text="Books covers")
-    sample = models.FileField(upload_to="book_samples/", null=True, help_text="Books samples")
+    contributors = models.ManyToManyField("Contributor", through="BookContributor")
+    cover = models.ImageField(upload_to="book_covers/", null=True, help_text="Books covers")
+    sample = models.FileField(upload_to="book_samples/", blank=True, help_text="Books samples")
 
     def __str__(self):
         return self.title
