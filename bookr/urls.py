@@ -18,12 +18,14 @@ from django.urls import path , include
 from django.conf import settings
 from django.conf.urls.static import static
 import reviews.views
+from bookr.views import profile
 
 
 urlpatterns = [
     path('accounts/', include(('django.contrib.auth.urls', 'auth'), namespace = 'accounts')),
     path('admin/', admin.site.urls),
     path('', include("reviews.urls")),
+    path('accounts/profile/', profile, name = 'profile')
 ]
 
 if settings.DEBUG:
