@@ -40,6 +40,9 @@
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
           </div>
+          {% if user.is_authenticated%}
+            <a class="nav-link" href="/accounts/profile/">User: {{ user.username }}</a>
+          {% endif %}
         </nav>
         <div class="container-fluid">
         {% for message in messages %}
