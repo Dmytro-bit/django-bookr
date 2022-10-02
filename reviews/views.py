@@ -60,8 +60,22 @@ def book_details(request, pk):
     book = get_object_or_404(Book, pk=pk)
     overall_rating = average_rating([review.rating for review in book.review_set.all()])
     context = { "overall_rating": overall_rating ,"book": book}
-    return render(request, "reviews/book_details.html", context=context)
 
+    if request.user.is_authenticated:
+        max_viewed_books_length = 10
+        viewed_books = request.session.get('viewed_books', [])
+        viewed_book = [book.id, book.title]
+        if viewed_book in viewed_books:
+            viewed_books.pop(viewed_books.index(viewed_book))
+        viewed_books.insert(0, viewed_book)
+        viewed_books = viewed_books[:max_viewed_books_length]
+        request.session['viewed_books'] = viewed_books
+    return render(request, "reviews/book_details.html", context)
+
+def is_staff_user(user):
+    return user.is_staff
+
+@user_passes_test(is_staff_user)
 def publisher_edit(request, pk = None):
     if pk is not None:
         publisher = get_object_or_404(Publisher,pk=pk)
@@ -83,12 +97,17 @@ def publisher_edit(request, pk = None):
         form = PublisherForm(instance=publisher)
     return render(request, "reviews/instance-form.html", {"instance": publisher, "form": form, "model_type": "Publisher" })
 
+@login_required
 def review_edit(request, book_pk, review_pk=None):
     book = get_object_or_404(Book, pk=book_pk)
-    review = None
 
     if review_pk is not None:
-        review = get_object_or_404(Review, book_id=book_pk, pk=review_pk )
+        review = get_object_or_404(Review, book_id = book_pk, pk = review_pk )
+        user = request.user
+        if not user.is_staff and review.creator.id !=user.id:
+            raise PermissionDenied
+    else:
+        review = None
 
     if request.method == "POST":
         form = ReviewForm(request.POST, instance=review)
@@ -115,7 +134,7 @@ def review_edit(request, book_pk, review_pk=None):
     return render(request, "reviews/instance-form.html", {"instance": review, "form": form, "model_type": "Review",
                                                  "related_model_type": "Book",
                                                  "related_instance":book})
-
+@login_required
 def book_media(request, book_pk):
     book = get_object_or_404(Book, pk = book_pk)
 
@@ -139,20 +158,5 @@ def book_media(request, book_pk):
         form =BookMediaForm()
     return render(request, "reviews/instance-form.html", {"form":form, "instance":book, "model_type": Book, "is_file_upload":True })
 
-def is_staff_user(user):
-    return user.is_staff
-@user_passes_test(is_staff_user)
 
-@login_required
-def review_edit(request, book_pk, review_pk= None):
-    book = get_object_or_404(Book, pk = book_pk)
-    if review_pk is not None:
-        review = get_object_or_404(Review, book_id = book_pk, pk = review_pk )
-        user = request.user
-        if not user.is_staff and review.creator.id !=user.id:
-            raise PermissionDenied
-    else:
-        review = None
 
-# @login_required
-# def book_media(request, pk):
