@@ -36,25 +36,26 @@ def welcome_view(request):
     return render(request, "base.html")
 
 def search_view(request):
-    print('In view')
     books = []
     search_text = ''
-
-    for name in request.GET:
-        print(f"KEY {name} = {request.GET[name]}")
     form = SearchForm(request.GET)
+
     if form.is_valid():
         search_text = form.cleaned_data['search']
-        print( 'search = ', search_text)
         search_in = form.cleaned_data.get("search_in") or "title"
+
         if search_in == 'title':
             books = Book.objects.filter(title__icontains = search_text )
-            print("In books ", books )
+
         else:
             books = Book.objects.filter(contributors__first_names__icontains = search_text )| Book.objects.filter(contributors__last_names__icontains = search_text )
-            print('In Contributors ', books )
 
-    return  render(request, "search-results.html", {"books": books , "form": form , "search_text": search_text })
+        context = {
+            "books": books,
+            "form": form,
+            "search_text": search_text
+        }
+    return render(request, "reviews/search-results.html", context)
 
 def book_details(request, pk):
     book = get_object_or_404(Book, pk=pk)
@@ -87,10 +88,8 @@ def publisher_edit(request, pk = None):
         if form.is_valid():
             update_publisher = form.save()
             if publisher is None:
-                # print("created")
                 messages.success(request, f'Publisher "{update_publisher}" was created')
             else:
-                # print("Updated")
                 messages.success(request, f'Publisher "{update_publisher}" was updated')
             return redirect("publisher_edit", update_publisher.pk)
     else:
