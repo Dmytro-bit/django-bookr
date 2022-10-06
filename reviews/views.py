@@ -36,11 +36,12 @@ def welcome_view(request):
     return render(request, "base.html")
 
 def search_view(request):
+    max_search_books_length = 10
     books = []
     search_text = ''
     form = SearchForm(request.GET)
-
-    if form.is_valid():
+    search_history = request.session.get('search_history', [])
+    if form.is_valid() and form.cleaned_data['search']:
         search_text = form.cleaned_data['search']
         search_in = form.cleaned_data.get("search_in") or "title"
 
@@ -50,12 +51,15 @@ def search_view(request):
         else:
             books = Book.objects.filter(contributors__first_names__icontains = search_text )| Book.objects.filter(contributors__last_names__icontains = search_text )
 
-        context = {
-            "books": books,
-            "form": form,
-            "search_text": search_text
-        }
-    return render(request, "reviews/search-results.html", context)
+        if request.user.is_authenticated:
+            search_history.append([search_in, search_text])
+            request.session['search_history'] = search_history
+
+    elif search_history:
+        initial = dict(search=search_text,search_in=search_history[-1][0])
+        form = SearchForm(initial=initial)
+
+    return render(request, "reviews/search-results.html", {"books": books, "form": form, "search_text": search_text})
 
 def book_details(request, pk):
     book = get_object_or_404(Book, pk=pk)

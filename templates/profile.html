@@ -45,5 +45,14 @@
       {% endfor %}
     </p>
   </div>
+  <div class="infocell">
+    <h4>Search History</h4>
+    <p>
+      {% for search_in, search_text in request.session.search_history %}
+        <a href="{% url 'search_view' %}?search={{ search_text }}&search_in={{search_in}}">{{ search_text }} in {{search_in}}</a>
+        <br>
+      {% endfor %}
+    </p>
+  </div>
 </div>
 {% endblock %}
