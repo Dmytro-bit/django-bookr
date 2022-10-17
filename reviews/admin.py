@@ -3,7 +3,7 @@ from reviews.models import Publisher, Contributor, Book, BookContributor, Review
 class BookAdmin(admin.ModelAdmin):
     search_fields = ("title","isbn__exact", "publisher__name")
     date_hierarchy = "publication_date"
-    list_display = ("title","isbn" )
+    list_display = ("title","isbn13", "publisher" )
     list_filter = ("publisher", "publication_date")
     filter_horizontal = ("contributors", )
 
