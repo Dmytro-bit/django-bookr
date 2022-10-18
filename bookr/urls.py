@@ -16,7 +16,6 @@ Including another URLconf
 from django.urls import path , include
 from django.conf import settings
 from django.conf.urls.static import static
-import reviews.views
 from bookr.views import profile
 from bookr_admin.admin import admin
 
