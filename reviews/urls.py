@@ -12,6 +12,6 @@ urlpatterns = [path('', views.welcome_view, name = "welcome_view"),
                path("books/<int:book_pk>/reviews/<int:review_pk>/", views.review_edit, name = "review_edit"),
                path("books/<int:book_pk>/media/", views.book_media, name = "book_media" ),
                path("api/all_books/", api_views.AllBooks.as_view(), name = "all_books"),
-
+               path('api/contributors/', api_views.ContributorView.as_view(), name = "contributors")
 
                ]

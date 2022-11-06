@@ -37,6 +37,9 @@ class Contributor(models.Model):
             res += word[0]
         return res
 
+    def number_contributions(self):
+        return self.bookcontributor_set.count()
+
 class BookContributor(models.Model):
     class ContributorRole(models.TextChoices):
         AUTHOR = "AUTHOR", "Author"
