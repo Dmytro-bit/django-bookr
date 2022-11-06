@@ -11,7 +11,7 @@ urlpatterns = [path('', views.welcome_view, name = "welcome_view"),
                path("books/<int:book_pk>/reviews/new/", views.review_edit, name = "review_create"),
                path("books/<int:book_pk>/reviews/<int:review_pk>/", views.review_edit, name = "review_edit"),
                path("books/<int:book_pk>/media/", views.book_media, name = "book_media" ),
-               path("api/first_api_view/", api_views.first_api_view),
+               path("api/all_books/", api_views.all_books, name = "all_books"),
 
 
                ]
