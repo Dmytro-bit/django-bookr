@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from . import views
+from . import views, api_views
 
 urlpatterns = [path('', views.welcome_view, name = "welcome_view"),
                path('books/', views.book_list, name = "book_list"),
@@ -11,6 +11,7 @@ urlpatterns = [path('', views.welcome_view, name = "welcome_view"),
                path("books/<int:book_pk>/reviews/new/", views.review_edit, name = "review_create"),
                path("books/<int:book_pk>/reviews/<int:review_pk>/", views.review_edit, name = "review_edit"),
                path("books/<int:book_pk>/media/", views.book_media, name = "book_media" ),
+               path("api/first_api_view/", api_views.first_api_view),
 
 
                ]
