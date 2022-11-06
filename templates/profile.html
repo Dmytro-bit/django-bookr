@@ -1,4 +1,5 @@
 {% extends "base.html"%}
+{% load profile_tags %}
 
 {% block title %}Bookr{% endblock %}
 
@@ -33,6 +34,7 @@
         Last Login: {{ request.user.last_login }}
         <br>
       </p>
+
     </div>
   </div>
   <div class="infocell">
@@ -55,4 +57,6 @@
     </p>
   </div>
 </div>
+
+{% book_list user.username %}
 {% endblock %}
