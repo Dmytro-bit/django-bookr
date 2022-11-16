@@ -15,6 +15,7 @@ urlpatterns = [path('', views.welcome_view, name = "welcome_view"),
                path("books/<int:book_pk>/reviews/<int:review_pk>/", views.review_edit, name = "review_edit"),
                path("books/<int:book_pk>/media/", views.book_media, name = "book_media" ),
                path("api/", include((router.urls, "api"))),
+               path("api/login", api_views.Login.as_view(), name = "login")
 
 
                ]

@@ -16,12 +16,15 @@ Including another URLconf
 from django.urls import path , include
 from django.conf import settings
 from django.conf.urls.static import static
+
+import bookr.views
 from bookr.views import profile
 from bookr_admin.admin import admin
 
 
 urlpatterns = [
     path('accounts/', include(('django.contrib.auth.urls', 'auth'), namespace = 'accounts')),
+    path('accounts/profile/reading_history/', bookr.views.reading_history, name = 'reading_history'),
     path('admin/', admin.site.urls),
     path('', include("reviews.urls")),
     path('accounts/profile/', profile, name = 'profile'),
