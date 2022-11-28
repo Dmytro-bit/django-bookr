@@ -29,7 +29,8 @@ urlpatterns = [
     path('', include("reviews.urls")),
     path('accounts/profile/', profile, name = 'profile'),
     path('filter_demo/', include('filter_demo.urls')),
-    path('book_management/', include("book_management.urls"))
+    path('book_management/', include("book_management.urls")),
+    path('',include('bookr_test.urls'))
 ]
 
 if settings.DEBUG:
