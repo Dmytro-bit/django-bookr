@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib import auth
+
 class Publisher(models.Model):
     name = models.CharField(max_length=50, help_text="The name of the publisher")
     website = models.URLField(help_text="Publisher website")

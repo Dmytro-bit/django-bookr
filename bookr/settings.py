@@ -43,7 +43,9 @@ class Dev(Configuration):
         'book_management',
         'rest_framework',
         'rest_framework.authtoken',
-        'bookr_test'
+        'bookr_test',
+        'debug_toolbar',
+        'crispy_forms'
     ]
 
     MIDDLEWARE = [
@@ -54,6 +56,7 @@ class Dev(Configuration):
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'debug_toolbar.middleware.DebugToolbarMiddleware'
     ]
 
     ROOT_URLCONF = 'bookr.urls'
@@ -80,12 +83,8 @@ class Dev(Configuration):
     # Database
     # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+    DATABASES = values.DatabaseURLValue(f'sqlite:///{BASE_DIR}/db.sqlite3',
+                                        environ_prefix='DJANGO')
 
 
     # Password validation
@@ -136,6 +135,13 @@ class Dev(Configuration):
 
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
     MEDIA_URL = "media/"
+
+    #internal_ips
+    INTERNAL_IPS = ['127.0.0.1']
+
+    #Crispy setup
+    CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 class Prod(Dev):
     DEBUG = False
     SECRET_KEY = values.SecretValue()
